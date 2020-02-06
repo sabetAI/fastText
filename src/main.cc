@@ -27,6 +27,8 @@ void printUsage()
       << "  predict                 predict most likely labels\n"
       << "  predict-prob            predict most likely labels with probabilities\n"
       << "  skipgram                train a skipgram model\n"
+      << "  s2v                     train a sent2vec model\n"
+      << "  bs2v                    train a bilingual sent2vec model\n"
       << "  cbow                    train a cbow model\n"
       << "  print-word-vectors      print word vectors given a trained model\n"
       << "  print-sentence-vectors  print sentence vectors given a trained model\n"
