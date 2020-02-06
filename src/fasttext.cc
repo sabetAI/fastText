@@ -462,21 +462,39 @@ void FastText::bs2v(
     real lr,
     const std::vector<int32_t> &line)
 {
-  std::vector<int32_t> bow;
-  std::uniform_int_distribution<> uniform(1, args_->ws);
-  for (int32_t w = 0; w < line.size(); w++)
+  std::vector<int32_t> context;
+  std::vector<int32_t> line1;
+  std::vector<int32_t> line2;
+  int32_t flag = 0;
+  for (int32_t i = 0; i < line.size(); ++i)
   {
-    int32_t boundary = uniform(state.rng);
-    bow.clear();
-    for (int32_t c = -boundary; c <= boundary; c++)
+    if (line[i] == dict_->getId("<<split>>"))
     {
-      if (c != 0 && w + c >= 0 && w + c < line.size())
-      {
-        const std::vector<int32_t> &ngrams = dict_->getSubwords(line[w + c]);
-        bow.insert(bow.end(), ngrams.cbegin(), ngrams.cend());
-      }
+      flag = 1;
+      continue;
     }
-    model_->update(bow, line, w, lr, state);
+    if (flag == 0)
+      line1.push_back(line[i]);
+    else
+      line2.push_back(line[i]);
+  }
+  for (int32_t i = 0; i < line1.size(); ++i)
+  {
+    context = line1;
+    context[i] = 0;
+    const std::vector<int32_t> &ngrams = dict_->getSubwords(line[i]);
+    model_->update(ngrams, line, i, lr, state);
+    context = line2;
+    model_->update(ngrams, line, i, lr, state);
+  }
+  for (int32_t i = 0; i < line2.size(); ++i)
+  {
+    context = line2;
+    context[i] = 0;
+    const std::vector<int32_t> &ngrams = dict_->getSubwords(line[i]);
+    model_->update(ngrams, line, i, lr, state);
+    context = line1;
+    model_->update(ngrams, line, i, lr, state);
   }
 }
 
