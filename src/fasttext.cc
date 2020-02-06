@@ -481,7 +481,7 @@ void FastText::bs2v(
   for (int32_t i = 0; i < line1.size(); ++i)
   {
     context = line1;
-    context[i] = 0;
+    // context[i] = 0;
     const std::vector<int32_t> &ngrams = dict_->getSubwords(line[i]);
     model_->update(ngrams, line, i, lr, state);
     context = line2;
@@ -490,7 +490,7 @@ void FastText::bs2v(
   for (int32_t i = 0; i < line2.size(); ++i)
   {
     context = line2;
-    context[i] = 0;
+    // context[i] = 0;
     const std::vector<int32_t> &ngrams = dict_->getSubwords(line[i]);
     model_->update(ngrams, line, i, lr, state);
     context = line1;
