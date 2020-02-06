@@ -498,22 +498,22 @@ void FastText::bs2v(
     context = line1;
     sentence_bow.clear();
     create_sentence_subword_representation(sentence_bow, context, i);
-    model_->update(sentence_bow, context, i, lr, state);
+    model_->update(sentence_bow, line1, i, lr, state);
     context = line2;
     sentence_bow.clear();
     create_sentence_subword_representation(sentence_bow, context, i);
-    model_->update(sentence_bow, context, i, lr, state);
+    model_->update(sentence_bow, line1, i, lr, state);
   }
   for (int32_t i = 0; i < line2.size(); ++i)
   {
     context = line2;
     sentence_bow.clear();
     create_sentence_subword_representation(sentence_bow, context, i);
-    model_->update(sentence_bow, context, i, lr, state);
+    model_->update(sentence_bow, line2, i, lr, state);
     context = line1;
     sentence_bow.clear();
     create_sentence_subword_representation(sentence_bow, context, i);
-    model_->update(sentence_bow, context, i, lr, state);
+    model_->update(sentence_bow, line2, i, lr, state);
   }
 }
 
