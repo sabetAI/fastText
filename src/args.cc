@@ -104,6 +104,10 @@ void Args::parseArgs(const std::vector<std::string> &args)
   {
     model = model_name::cbow;
   }
+  else if (command == "s2v")
+  {
+    model = model_name::s2v;
+  }
   else if (command == "bs2v")
   {
     model = model_name::bs2v;

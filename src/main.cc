@@ -491,7 +491,7 @@ int main(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
   std::string command(args[1]);
-  if (command == "bs2v" || command == "skipgram" || command == "cbow" || command == "supervised")
+  if (command == "s2v" || command == "bs2v" || command == "skipgram" || command == "cbow" || command == "supervised")
   {
     train(args);
   }

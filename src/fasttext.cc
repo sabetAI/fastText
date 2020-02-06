@@ -462,10 +462,12 @@ void FastText::sent2vec(
     real lr,
     const std::vector<int32_t> &line)
 {
+  std::vector<int32_t> sentence_bow;
   for (int32_t w = 0; w < line.size(); w++)
   {
-    const std::vector<int32_t> &ngrams = dict_->getSubwords(line[w]);
-    model_->update(ngrams, line, w, lr, state);
+    sentence_bow.clear();
+    create_sentence_subword_representation(sentence_bow, line, w);
+    model_->update(sentence_bow, line, w, lr, state);
   }
 }
 
@@ -477,7 +479,7 @@ void FastText::bs2v(
   std::vector<int32_t> context;
   std::vector<int32_t> line1;
   std::vector<int32_t> line2;
-  std::vector<int32_t> sent_bow;
+  std::vector<int32_t> sentence_bow;
   int32_t flag = 0;
   for (int32_t i = 0; i < line.size(); ++i)
   {
@@ -494,36 +496,36 @@ void FastText::bs2v(
   for (int32_t i = 0; i < line1.size(); ++i)
   {
     context = line1;
-    const std::vector<int32_t> &ngrams = dict_->getSubwords(line[i]);
-    sent_bow.clear();
-    for (int32_t j = 0; j < line1.size(); ++i)
-    {
-      if (j != i)
-      {
-        const std::vector<int32_t> &ngrams = dict_->getSubwords(line[j]);
-        sent_bow.insert(sent_bow.end(), ngrams.cbegin(), ngrams.cend());
-      }
-    }
-    model_->update(sent_bow, line, i, lr, state);
+    sentence_bow.clear();
+    create_sentence_subword_representation(sentence_bow, context, i);
+    model_->update(sentence_bow, context, i, lr, state);
     context = line2;
-    model_->update(sent_bow, line, i, lr, state);
+    sentence_bow.clear();
+    create_sentence_subword_representation(sentence_bow, context, i);
+    model_->update(sentence_bow, context, i, lr, state);
   }
   for (int32_t i = 0; i < line2.size(); ++i)
   {
     context = line2;
-    sent_bow.clear();
-    for (int32_t j = 0; j < line2.size(); ++i)
-    {
-      if (j != i)
-      {
-        const std::vector<int32_t> &ngrams = dict_->getSubwords(line[j]);
-        sent_bow.insert(sent_bow.end(), ngrams.cbegin(), ngrams.cend());
-      }
-    }
-    const std::vector<int32_t> &sent_bow = dict_->getSubwords(line[i]);
-    model_->update(sent_bow, line, i, lr, state);
+    sentence_bow.clear();
+    create_sentence_subword_representation(sentence_bow, context, i);
+    model_->update(sentence_bow, context, i, lr, state);
     context = line1;
-    model_->update(sent_bow, line, i, lr, state);
+    sentence_bow.clear();
+    create_sentence_subword_representation(sentence_bow, context, i);
+    model_->update(sentence_bow, context, i, lr, state);
+  }
+}
+
+void FastText::create_sentence_subword_representation(std::vector<int32_t> &sentence_bow, const std::vector<int32_t> &context, int32_t target)
+{
+  for (int32_t j = 0; j < context.size(); ++j)
+  {
+    if (j != target)
+    {
+      const std::vector<int32_t> &ngrams = dict_->getSubwords(context[j]);
+      sentence_bow.insert(sentence_bow.end(), ngrams.cbegin(), ngrams.cend());
+    }
   }
 }
 

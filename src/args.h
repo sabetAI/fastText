@@ -21,6 +21,7 @@ enum class model_name : int
   cbow = 1,
   sg,
   sup,
+  s2v,
   bs2v
 };
 enum class loss_name : int

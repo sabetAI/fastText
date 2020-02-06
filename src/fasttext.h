@@ -77,6 +77,7 @@ protected:
         Model::State &state,
         real lr,
         const std::vector<int32_t> &line);
+    void create_sentence_subword_representation(std::vector<int32_t> &sentence_bow, const std::vector<int32_t> &context, int32_t target);
     void skipgram(Model::State &state, real lr, const std::vector<int32_t> &line);
 
     bool quant_;
