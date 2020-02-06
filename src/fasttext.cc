@@ -457,6 +457,18 @@ void FastText::cbow(
   }
 }
 
+void FastText::sent2vec(
+    Model::State &state,
+    real lr,
+    const std::vector<int32_t> &line)
+{
+  for (int32_t w = 0; w < line.size(); w++)
+  {
+    const std::vector<int32_t> &ngrams = dict_->getSubwords(line[w]);
+    model_->update(ngrams, line, w, lr, state);
+  }
+}
+
 void FastText::bs2v(
     Model::State &state,
     real lr,
@@ -465,6 +477,7 @@ void FastText::bs2v(
   std::vector<int32_t> context;
   std::vector<int32_t> line1;
   std::vector<int32_t> line2;
+  std::vector<int32_t> sent_bow;
   int32_t flag = 0;
   for (int32_t i = 0; i < line.size(); ++i)
   {
@@ -481,20 +494,36 @@ void FastText::bs2v(
   for (int32_t i = 0; i < line1.size(); ++i)
   {
     context = line1;
-    // context[i] = 0;
     const std::vector<int32_t> &ngrams = dict_->getSubwords(line[i]);
-    model_->update(ngrams, line, i, lr, state);
+    sent_bow.clear();
+    for (int32_t j = 0; j < line1.size(); ++i)
+    {
+      if (j != i)
+      {
+        const std::vector<int32_t> &ngrams = dict_->getSubwords(line[j]);
+        sent_bow.insert(sent_bow.end(), ngrams.cbegin(), ngrams.cend());
+      }
+    }
+    model_->update(sent_bow, line, i, lr, state);
     context = line2;
-    model_->update(ngrams, line, i, lr, state);
+    model_->update(sent_bow, line, i, lr, state);
   }
   for (int32_t i = 0; i < line2.size(); ++i)
   {
     context = line2;
-    // context[i] = 0;
-    const std::vector<int32_t> &ngrams = dict_->getSubwords(line[i]);
-    model_->update(ngrams, line, i, lr, state);
+    sent_bow.clear();
+    for (int32_t j = 0; j < line2.size(); ++i)
+    {
+      if (j != i)
+      {
+        const std::vector<int32_t> &ngrams = dict_->getSubwords(line[j]);
+        sent_bow.insert(sent_bow.end(), ngrams.cbegin(), ngrams.cend());
+      }
+    }
+    const std::vector<int32_t> &sent_bow = dict_->getSubwords(line[i]);
+    model_->update(sent_bow, line, i, lr, state);
     context = line1;
-    model_->update(ngrams, line, i, lr, state);
+    model_->update(sent_bow, line, i, lr, state);
   }
 }
 
