@@ -13,18 +13,32 @@
 #include <string>
 #include <vector>
 
-namespace fasttext {
+namespace fasttext
+{
 
-enum class model_name : int { cbow = 1, sg, sup };
-enum class loss_name : int { hs = 1, ns, softmax, ova };
+enum class model_name : int
+{
+  cbow = 1,
+  sg,
+  sup,
+  bs2v
+};
+enum class loss_name : int
+{
+  hs = 1,
+  ns,
+  softmax,
+  ova
+};
 
-class Args {
- protected:
+class Args
+{
+protected:
   std::string lossToString(loss_name) const;
   std::string boolToString(bool) const;
   std::string modelToString(model_name) const;
 
- public:
+public:
   Args();
   std::string input;
   std::string output;
@@ -55,14 +69,14 @@ class Args {
   size_t cutoff;
   size_t dsub;
 
-  void parseArgs(const std::vector<std::string>& args);
+  void parseArgs(const std::vector<std::string> &args);
   void printHelp();
   void printBasicHelp();
   void printDictionaryHelp();
   void printTrainingHelp();
   void printQuantizationHelp();
-  void save(std::ostream&);
-  void load(std::istream&);
-  void dump(std::ostream&) const;
+  void save(std::ostream &);
+  void load(std::istream &);
+  void dump(std::ostream &) const;
 };
 } // namespace fasttext
